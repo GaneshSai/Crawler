@@ -21,22 +21,14 @@ def data_to_csv():
     Session = sessionmaker(bind=engine)
     session = Session()
     cur = engine.connect()
-    with open(
-        "Urls.csv"
-    ) as csv_file:
-        csv_data = csv.DictReader(csv_file)
+    with open("Urls.csv") as csv_file:
+        csv_data = csv.reader(csv_file)
         for row in csv_data:
-            print(row)
             cur.execute(
-                "INSERT INTO Information_Security1(SNO, PID, URLs, IPAdd, Flag, H1) VALUES ('{sno}', '{pid}', '{urls}', '{ipadd}', '{flag}', '{hash}')".format(
-                    sno=col[0],
-                    pid=col[1],
-                    urls=col[2],
-                    ipadd=col[4],
-                    flag=col[5],
-                    hash=col[6],
-                )
-            )
+                "INSERT INTO "
+                + DatabaseConfig.Table_Name
+                + "(SNO, PID, URLs, IPAdd, Flag, H1) VALUES (%s, %s, %s, %s, %s, %s)",
+                row)
             cur.execute("update Information_Security1 set H1 = NULL where H1 = ''")
             # close the connection to the database.
         cur.close()

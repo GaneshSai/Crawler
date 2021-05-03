@@ -26,7 +26,7 @@ import socket
 from tldextract import tldextract
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from newdb import sorting_ip
+from new_db import sorting_ip
 
 # import newdb.sorting_ip
 # import gensim
@@ -100,18 +100,12 @@ def crawling(url):  # crawling plain text, and sub urls
                                 row_dict["SNO"] = j
                                 row_dict["Flag"] = 0
                                 row_dict["H1"] = ""
-                                # print(sub_link)
                                 n = n + 1
-                                # print(sub_link)
                                 IP = IP_add(sub_link)
                                 row_dict["IP_Address"] = IP
-                                # print(IP)
                                 f.write(str(n) + " ) " + sub_link + "-" + IP + "\n")
                                 print(row_dict)
                                 csv_writer.writerow(row_dict)
-                                # f.write(sub_link + "\n")
-                                # f.close()
-                                # inst(PID, sub_link, IP)  # insert func() for sub-urls
         except Exception as e:
             print(e)
             pass

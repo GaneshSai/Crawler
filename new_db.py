@@ -8,7 +8,6 @@ from sqlalchemy import create_engine
 
 # from newcrawler import *
 
-# print("newdb")
 engine = create_engine(
     "mysql+pymysql://{user}:{pw}@localhost/{db}".format(
         user=DatabaseConfig.user,
