@@ -52,14 +52,23 @@ def sorting_ip():  # Sorting IP in form of ascending order
     # thread_initializer(queue)
 
 
+def update(hash_x, url):
+    sql = (
+        "update "
+        + DatabaseConfig.Table_Name
+        + " set H1 = %s, Flag = 1 where URLs = %s;"
+    )
+    cur.execute(sql, (hash_x, url))
+    session.commit()
+
+
 def getUrlsIPBased(ip):  # fetching all the IP address already in DB
     sql = (
-        "select distinct URLs,IPADD  from "
+        "select distinct URLs, IPADD from "
         + DatabaseConfig.Table_Name
-        + " \
-    where IPADD='"
+        + " where IPADD='"
         + ip
-        + "' and Flag !=1;"
+        + "' and Flag<>1;"
     )
     try:
         sql_results = cur.execute(sql)
@@ -69,3 +78,29 @@ def getUrlsIPBased(ip):  # fetching all the IP address already in DB
     except Exception as e:
         print(e)
         print("***********")
+
+
+def seed_url():
+    # Checking if there is already some URL's in DB.
+    sql = (
+        "select distinct substring_index(IPADD,'.',1) as a,\
+          substring_index(substring_index(IPADD,'.',2),'.',-1) as b,"
+        "substring_index(substring_index\
+          (substring_index(IPADD,'.',3),'.',-1),'.',-1) as c,"
+        "substring_index(IPADD,'.',-1) as d, IPADD,pid,urls from "
+        + DatabaseConfig.Table_Name
+        + " \
+          where  Flag<>1 order by a+0,b+0,c+0,d+0 limit 1;"
+    )
+    result = cur.execute(sql)
+    session.commit()
+    result = result.fetchone()
+    return result
+
+
+def sno():
+    sql = "select sno from " + DatabaseConfig.Table_Name + " ORDER BY SNO DESC LIMIT 1;"
+    result = cur.execute(sql)
+    session.commit()
+    result = result.fetchone()
+    return result

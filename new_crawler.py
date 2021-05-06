@@ -26,7 +26,7 @@ import socket
 from tldextract import tldextract
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from new_db import sorting_ip
+from new_db import *
 
 # import newdb.sorting_ip
 # import gensim
@@ -38,8 +38,11 @@ from new_db import sorting_ip
 queue = []
 visited = []
 sub_urls = {}
-i = 0
-j = 0
+sno = sno()
+if sno is not None:
+    j = int(sno[0])
+else:
+    j = 0
 f = open(FilesConfig.sub_urls, "a")
 csv_filename = FilesConfig.csv_file_name + "Urls.csv"
 with open(csv_filename, "a") as Url_csvFile:
@@ -66,11 +69,11 @@ def crawling(url):  # crawling plain text, and sub urls
             row_dict["H1"] = hash_x
             row_dict["Flag"] = 1
             j = j + 1
-            i = i + 1
             row_dict["SNO"] = j
             row_dict["PID"] = j
+            IP = IP_add(url)
+            row_dict["IP_Address"] = IP
             csv_writer.writerow(row_dict)
-            # print(i)
             fn = open(FilesConfig.text_storing + str(j) + ".txt", "w")
             fn.write(url + "\n")
             fn.write(text)
@@ -115,7 +118,6 @@ def crawling(url):  # crawling plain text, and sub urls
     for url in crawled_list:
         if url not in queue:
             queue.append(url)
-        print(queue)
         thread_initializer(queue)
 
 
@@ -151,11 +153,21 @@ def thread_initializer(queue):
 
 
 if __name__ == "__main__":
-    with open("wiki_urls.txt", "r") as seed_url_file:
-        content = seed_url_file.read()
-        content = content.split("\n")
-        for url in content:
-            seed_url = url
-            queue.append(seed_url)  # Adding seed-url into queue
-            print(queue)
-            thread_initializer(queue)
+
+    result = seed_url()
+    if (
+        result is not None
+    ):  # if there are URL's in DB, add those to the queue and start thread.
+        seed_url = result[6]
+        print(seed_url)
+        queue.append(seed_url)
+        thread_initializer(queue)
+    else:
+        with open("wiki_urls.txt", "r") as seed_url_file:
+            content = seed_url_file.read()
+            content = content.split("\n")
+            for url in content:
+                seed_url = url
+                queue.append(seed_url)  # Adding seed-url into queue
+                print(queue)
+                thread_initializer(queue)
