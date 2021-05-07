@@ -9,11 +9,10 @@ from sqlalchemy import create_engine
 # from newcrawler import *
 
 engine = create_engine(
-    "mysql+pymysql://{user}:{pw}@localhost/{db}".format(
+    "mysql+pymysql://{user}:{pw}@localhost/{db}?charset=utf8mb4".format(
         user=DatabaseConfig.user,
         pw=DatabaseConfig.passwd,
         db=DatabaseConfig.database,
-        pool_recycle=3600,
     )
 )
 

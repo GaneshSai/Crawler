@@ -11,11 +11,10 @@ from new_db import update
 
 def data_to_csv():
     engine = create_engine(
-        "mysql+pymysql://{user}:{pw}@localhost/{db}".format(
+        "mysql+pymysql://{user}:{pw}@localhost/{db}?charset=utf8mb4".format(
             user=DatabaseConfig.user,
             pw=DatabaseConfig.passwd,
             db=DatabaseConfig.database,
-            pool_recycle=3600,
         )
     )
 
@@ -26,6 +25,7 @@ def data_to_csv():
         csv_data = csv.reader(csv_file)
         for row in csv_data:
             url = row[2]
+            url = str(url)
             hash_x = row[5]
             update(hash_x, url)
             result = cur.execute("SELECT * FROM " + DatabaseConfig.Table_Name + " WHERE URLs=%s", (url,))
