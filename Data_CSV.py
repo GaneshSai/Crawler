@@ -46,7 +46,7 @@ def data_to_csv():
 
 
 
-while True:
+while True: # Running the code after every 10 sec so that it doesn't stop.
     data_to_csv()
     f = open("Urls.csv", "w")
     f.truncate()
