@@ -1,6 +1,6 @@
 <p>This is a crawler which follows ABC algorithm based on URLs IP Address.</p>
 <p>Requirement:<br>
-Python3.6, Mysql, Beautiful Soup, Gensim.</p>
+Python3.6, Mysql, Beautiful Soup.</p>
 <p>NOTE:  All files need to be in same folder.</p>
 <ul>
 <li>
@@ -14,9 +14,6 @@ The schema of the table is DSSE.zip file. You can import that in the database.</
 </li>
 <li>
 <p>Seed urls can be defined by your own. As I have used Information Security Wiki. But this code is worked for any domain.</p>
-</li>
-<li>
-<p>The key words which I have given in listnames_as_tuple.ini are according to our study and understanding. You can also change according to your understandings.</p>
 </li>
 <li>
 <p>Main file to run is <a href="https://github.com/GaneshSai/Crawler/blob/master/new_crawler.py">new_crawler.py</a> and <a href="https://github.com/GaneshSai/Crawler/blob/master/Data_CSV.py">Data_CSV.py</a>.</p>
