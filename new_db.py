@@ -38,7 +38,7 @@ def sorting_ip():  # Sorting IP in form of ascending order
         session.commit()
         sql_results = sql_results.fetchall()
         for element in sql_results:
-            ip = element[4]
+            ip = element[4] # getting only the IP address
             result = getUrlsIPBased(ip)
             for url in result:
                 P_url = url[0]
@@ -51,7 +51,7 @@ def sorting_ip():  # Sorting IP in form of ascending order
     # thread_initializer(queue)
 
 
-def update(hash_x, url):
+def update(hash_x, url): #updating the hash value and its flag after it getting crawled.
     sql = (
         "update "
         + DatabaseConfig.Table_Name
