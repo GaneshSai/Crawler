@@ -64,8 +64,8 @@ def crawling(url):  # crawling plain text, and sub urls
             soup = bs4.BeautifulSoup(req.text, "html.parser")
             for script in soup(["script", "style"]):
                 script.extract()
-            text = soup.get_text()
-            hash_x = hash(text)
+            text = soup.get_text() #plain text crawled
+            hash_x = hash(text) # hash value of the text crawled
             row_dict["H1"] = hash_x
             row_dict["Flag"] = 1
             j = j + 1
@@ -108,17 +108,17 @@ def crawling(url):  # crawling plain text, and sub urls
                                 row_dict["IP_Address"] = IP
                                 f.write(str(n) + " ) " + sub_link + "-" + IP + "\n")
                                 print(row_dict)
-                                csv_writer.writerow(row_dict)
+                                csv_writer.writerow(row_dict) # Writing sub-urls data to CSV
         except Exception as e:
             print(e)
             pass
     gc.collect()
     time.sleep(5)
-    crawled_list = sorting_ip()
+    crawled_list = sorting_ip() # getting the urls from DB
     for url in crawled_list:
         if url not in queue:
             queue.append(url)
-        thread_initializer(queue)
+        thread_initializer(queue) # initialising threads for the urls got from the DB
 
 
 # def get_url(url):
