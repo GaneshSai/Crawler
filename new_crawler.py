@@ -80,8 +80,7 @@ def crawling(url):  # crawling plain text, and sub urls
             f1 = open(FilesConfig.hash_value + str(j) + ".txt", "w")
             f1.write("%d" % hash_x)
             f1.close()
-
-            # w2v_sim(url, text)
+            w2v_sim(url, text)
             n = 0
             for link in soup.find_all("a"):
                 sub_link = link.get(
