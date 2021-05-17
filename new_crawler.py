@@ -34,6 +34,7 @@ from new_db import *
 # from w2vec import *
 # from Database import *
 
+w2v_model_300 = KeyedVectors.load_word2vec_format("model300.bin", binary=True)
 
 queue = []
 visited = []
