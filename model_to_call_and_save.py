@@ -1,17 +1,17 @@
 import gensim
 from gensim import models
-from gensim import corpora
-from gensim.models.doc2vec import Doc2Vec
-from gensim import utils
-from gensim.models.doc2vec import LabeledSentence
-from gensim.models import Doc2Vec
-from gensim.corpora import Dictionary
-from gensim.similarities import SoftCosineSimilarity, SparseTermSimilarityMatrix
-from gensim.similarities import WmdSimilarity
+# from gensim import corpora
+# from gensim.models.doc2vec import Doc2Vec
+# from gensim import utils
+# # from gensim.models.doc2vec import LabeledSentence
+# from gensim.models import Doc2Vec
+# from gensim.corpora import Dictionary
+# from gensim.similarities import SoftCosineSimilarity, SparseTermSimilarityMatrix
+# from gensim.similarities import WmdSimilarity
+# import gensim.downloader as api
+# from gensim.models import KeyedVectors
 import gensim.downloader as api
-from gensim.models import KeyedVectors
-import gensim.downloader as api
-from gensim.models.doc2vec import Doc2Vec
+# from gensim.models.doc2vec import Doc2Vec
 
 
 

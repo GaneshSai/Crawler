@@ -8,15 +8,16 @@ import configparser
 import json
 from config import FilesConfig
 from config import CSVColumnConfig
-from Crawler import *
 from text_cleaning import *
+from Crawler import *
+
 
 def w2v_sim(url, text):
     url = url
     text = text
 
-    save_not_crawled = "/home/ubuntu/DSSE/Not_Saved.txt"
-    csv_filename = FilesConfig.csv_file_name + "Similarity.csv"
+    save_not_crawled = FilesConfig.csv_filename + "Not_Saved.txt"
+    csv_filename = FilesConfig.csv_file_name + "Similarity_w2v.csv"
     counter = 0
     with open(csv_filename, "a") as trail_csvFile:
         file_exists = os.path.isfile(csv_filename)
@@ -52,9 +53,10 @@ def w2v_sim(url, text):
                     wmsimilarity = 1 / (
                         1 + sim_list_300
                     )  # Similarity is the negative of the distance.
+                    similarity = float("{:.4f}".format(wmsimilarity))
 
                     # Writing these results to a csv file
-                    row_dict[colum_alias_dict[list_name]] = wmsimilarity
+                    row_dict[colum_alias_dict[list_name]] = similarity
                 csv_writer.writerow(row_dict)
         except Exception as ex:
             # execption_message= str(ex)

@@ -27,12 +27,10 @@ from tldextract import tldextract
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from new_db import *
+import gensim
+from gensim.models import KeyedVectors
+from w2vec import *
 
-# import newdb.sorting_ip
-# import gensim
-# from gensim.models import KeyedVectors
-# from w2vec import *
-# from Database import *
 
 w2v_model_300 = KeyedVectors.load_word2vec_format("model300.bin", binary=True)
 

@@ -9,9 +9,10 @@ import nltk
 from nltk import download
 from string import punctuation as pnc
 from nltk.corpus import stopwords
-from w2vec import *
+# from w2vec import *
 
 def as_list_soup(text):
+    print(type(text))
     paragraphs = text.encode("utf-8")
 
     # defining a nested function to remove punctuations from the corpus
