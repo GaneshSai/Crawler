@@ -27,12 +27,16 @@ from tldextract import tldextract
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from new_db import *
-import gensim
-from gensim.models import KeyedVectors
-from w2vec import *
+# import gensim
+# from gensim.models import KeyedVectors
+# from w2vec import *
+from sentence_transformers import SentenceTransformer
+from test_bert import *
 
 
-w2v_model_300 = KeyedVectors.load_word2vec_format("model300.bin", binary=True)
+# w2v_model_300 = KeyedVectors.load_word2vec_format("model300.bin", binary=True)
+sbert_model = SentenceTransformer("bert-base-nli-mean-tokens") # Model being loaded...
+
 
 queue = []
 visited = []
@@ -79,7 +83,7 @@ def crawling(url):  # crawling plain text, and sub urls
             f1 = open(FilesConfig.hash_value + str(j) + ".txt", "w")
             f1.write("%d" % hash_x)
             f1.close()
-            w2v_sim(url, text)
+            bert(text, url)
             n = 0
             for link in soup.find_all("a"):
                 sub_link = link.get(
