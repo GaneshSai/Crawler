@@ -46,8 +46,9 @@ def sorting_ip():  # Sorting IP in form of ascending order
         return queue
 
     except Exception as e:
-        print(e)
-        print("############")
+        pass
+        # print(e)
+        # print("############")
     # thread_initializer(queue)
 
 
@@ -75,8 +76,9 @@ def getUrlsIPBased(ip):  # fetching all the IP address already in DB
         sql_results = sql_results.fetchall()
         return sql_results
     except Exception as e:
-        print(e)
-        print("***********")
+        pass
+        # print(e)
+        # print("***********")
 
 
 def seed_url():

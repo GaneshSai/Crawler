@@ -39,7 +39,13 @@ sbert_model = SentenceTransformer("bert-base-nli-mean-tokens") # Model being loa
 
 
 queue = []
-visited = []
+try:
+    with open(FilesConfig.csv_filename + "Visited.txt") as f:
+        visited = f.read()
+    visited = visited.split(',')
+except:
+    visited = []
+
 sub_urls = {}
 sno = sno()
 if sno is not None:
@@ -100,6 +106,7 @@ def crawling(url):  # crawling plain text, and sub urls
                             if sub_link not in visited:
                                 # appending data into visited list
                                 visited.append(sub_link)
+                                visited_json(visited)
                                 j = j + 1
                                 row_dict["URLs"] = sub_link
                                 row_dict["SNO"] = j
@@ -112,7 +119,7 @@ def crawling(url):  # crawling plain text, and sub urls
                                 print(row_dict)
                                 csv_writer.writerow(row_dict) # Writing sub-urls data to CSV
         except Exception as e:
-            print(e)
+            # print(e)
             pass
     gc.collect()
     time.sleep(5)
@@ -140,6 +147,9 @@ def IP_add(l):  # extraction of IP address
     ip = socket.gethostbyname(URL)
     return ip
 
+def visited_json(visited):
+    with open(FilesConfig.csv_filename + "Visited.txt", "a") as file:
+        json.dump(visited, file)
 
 def thread_initializer(queue):
     thrs = []
