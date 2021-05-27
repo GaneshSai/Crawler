@@ -59,6 +59,11 @@ with open(csv_filename, "a") as Url_csvFile:
     csv_writer = csv.DictWriter(Url_csvFile, fieldnames=column_names)
 
 
+def visited_json(visited):
+    with open(FilesConfig.csv_filename + "Visited.txt", "a") as file:
+        json.dump(visited, file)
+
+
 def crawling(url):  # crawling plain text, and sub urls
     if len(queue) > 0:
         queue.pop(0)
@@ -147,9 +152,6 @@ def IP_add(l):  # extraction of IP address
     ip = socket.gethostbyname(URL)
     return ip
 
-def visited_json(visited):
-    with open(FilesConfig.csv_filename + "Visited.txt", "a") as file:
-        json.dump(visited, file)
 
 def thread_initializer(queue):
     thrs = []
