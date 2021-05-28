@@ -108,7 +108,6 @@ def crawling(url):  # crawling plain text, and sub urls
             writing_text(text, j)
             writing_hash(hash_x, j)
             score_IS = bert(text, url)
-            print(score_IS)
             for score in score_IS:
                 print(score)
                 row_dict["Score"] = score
@@ -147,7 +146,7 @@ def crawling(url):  # crawling plain text, and sub urls
             pass
     gc.collect()
     time.sleep(5)
-    crawled_list = sorting_ip()  # getting the urls from DB
+    crawled_list = sorting_score()  # getting the urls from DB
     for url in crawled_list:
         if url not in queue:
             queue.append(url)

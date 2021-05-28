@@ -6,7 +6,6 @@ import configparser
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
-# from newcrawler import *
 
 engine = create_engine(
     "mysql+pymysql://{user}:{pw}@localhost/{db}?charset=utf8mb4".format(
@@ -23,23 +22,43 @@ cur = engine.connect()
 queue = []
 
 
-def sorting_ip():  # Sorting IP in form of ascending order
-    sql = (
-        "select distinct substring_index(IPADD,'.',1) as a,"
-        "substring_index(substring_index(IPADD,'.',2),'.',-1) as b,"
-        "substring_index(substring_index(substring_index\
-          (IPADD,'.',3),'.',-1),'.',-1) as c,"
-        "substring_index(IPADD,'.',-1) as d, IPADD  from "
-        + DatabaseConfig.Table_Name
-        + " where Flag = 0 order by a+0,b+0,c+0,d+0;"
-    )
+# def sorting_ip():  # Sorting IP in form of ascending order
+#     sql = (
+#         "select distinct substring_index(IPADD,'.',1) as a,"
+#         "substring_index(substring_index(IPADD,'.',2),'.',-1) as b,"
+#         "substring_index(substring_index(substring_index\
+#           (IPADD,'.',3),'.',-1),'.',-1) as c,"
+#         "substring_index(IPADD,'.',-1) as d, IPADD  from "
+#         + DatabaseConfig.Table_Name
+#         + " where Flag = 0 order by a+0,b+0,c+0,d+0;"
+#     )
+#     try:
+#         sql_results = cur.execute(sql)
+#         session.commit()
+#         sql_results = sql_results.fetchall()
+#         for element in sql_results:
+#             ip = element[4] # getting only the IP address
+#             result = getUrlsIPBased(ip)
+#             for url in result:
+#                 P_url = url[0]
+#                 queue.append(P_url)
+#         return queue
+
+#     except Exception as e:
+#         pass
+        # print(e)
+        # print("############")
+    # thread_initializer(queue)
+
+def sorting_score():
+    sql = ("select Score from " + DatabaseConfig.Table_Name + "order by Score DSEC;")
     try:
         sql_results = cur.execute(sql)
         session.commit()
         sql_results = sql_results.fetchall()
         for element in sql_results:
-            ip = element[4] # getting only the IP address
-            result = getUrlsIPBased(ip)
+            score = element[0]
+            result = getUrlsIPBased(score)
             for url in result:
                 P_url = url[0]
                 queue.append(P_url)
@@ -47,18 +66,6 @@ def sorting_ip():  # Sorting IP in form of ascending order
 
     except Exception as e:
         pass
-        # print(e)
-        # print("############")
-    # thread_initializer(queue)
-
-# def sorting_score():
-#     sql = ("select Score from " + DatabaseConfig.Table_Name + "order by Score DSEC;")
-#     try:
-#         sql_results = cur.execute(sql)
-#         session.commit()
-#         sql_results = sql_results.fetchall()
-#         for element in sql_results:
-
 
 
 def update(hash_x, url): #updating the hash value and its flag after it getting crawled.
@@ -75,7 +82,7 @@ def getUrlsIPBased(ip):  # fetching all the IP address already in DB
     sql = (
         "select distinct URLs, IPADD from "
         + DatabaseConfig.Table_Name
-        + " where IPADD='"
+        + " where Score='"
         + ip
         + "' and Flag<>1;"
     )
