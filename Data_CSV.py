@@ -35,7 +35,7 @@ def data_to_csv():
                     sql = (
                         "INSERT INTO "
                         + DatabaseConfig.Table_Name
-                        + "(SNO, PID, URLs, IPAdd, Flag, H1) VALUES (%s, %s, %s, %s, %s, %s)")
+                        + "(SNO, PID, URLs, IPAdd, Flag, H1, Score) VALUES (%s, %s, %s, %s, %s, %s, %s)")
                     cur.execute(sql, row)
                     cur.execute("update Information_Security1 set H1 = NULL where H1 = '';")
                     session.commit()

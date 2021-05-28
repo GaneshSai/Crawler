@@ -51,6 +51,15 @@ def sorting_ip():  # Sorting IP in form of ascending order
         # print("############")
     # thread_initializer(queue)
 
+# def sorting_score():
+#     sql = ("select Score from " + DatabaseConfig.Table_Name + "order by Score DSEC;")
+#     try:
+#         sql_results = cur.execute(sql)
+#         session.commit()
+#         sql_results = sql_results.fetchall()
+#         for element in sql_results:
+
+
 
 def update(hash_x, url): #updating the hash value and its flag after it getting crawled.
     sql = (

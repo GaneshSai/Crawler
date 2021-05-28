@@ -64,6 +64,8 @@ def bert(text, url):
                 )
                 pairwise_similarities = cosine_similarity(document_embeddings)
                 score = cosine_similarity(0, pairwise_similarities, "Cosine Similarity")
+                if list_name == "informationsecurity":
+                    yield score
                 row_dict[colum_alias_dict[list_name]] = score
             csv_writer.writerow(row_dict)
         except Exception as ex:
