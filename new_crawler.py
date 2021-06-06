@@ -28,17 +28,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from new_db import *
 
-# import gensim
-# from gensim.models import KeyedVectors
-# from w2vec import *
-from sentence_transformers import SentenceTransformer
-from test_bert import *
-
-
-# w2v_model_300 = KeyedVectors.load_word2vec_format("model300.bin", binary=True)
-sbert_model = SentenceTransformer("bert-base-nli-mean-tokens")  # Model being loaded...
-
-
 queue = []
 try:
     with open(FilesConfig.csv_filename + "Visited.txt") as f:
@@ -64,24 +53,14 @@ def visited_json(visited):
         json.dump(visited, file)
 
 
-def writing_text(text, j): # Writing extracted text into files
-    fn = open(FilesConfig.text_storing + str(j) + ".txt", "w")
-    fn.write(url + "\n")
-    fn.write(text)
-    fn.close()
-
-def writing_hash(hash_x, j): # Writing the hash value of extracted text into files
-    f1 = open(FilesConfig.hash_value + str(j) + ".txt", "w")
-    f1.write("%d" % hash_x)
-    f1.close()
-
-
-def writing_suburls(n, sub_link, IP): # Writing sub URLs into text file
+def writing_suburls(n, sub_link, IP):  # Writing sub URLs into text file
     f = open(FilesConfig.sub_urls, "a")
     f.write(str(n) + " ) " + sub_link + "-" + IP + "\n")
     f.close()
 
+
 def crawling(url):  # crawling plain text, and sub urls
+    print(url)
     if len(queue) > 0:
         queue.pop(0)
     global i, j
@@ -90,27 +69,30 @@ def crawling(url):  # crawling plain text, and sub urls
         row_dict = {}
         row_dict["URLs"] = url
         try:
-            req = requests.get(url) # Getting request for the URLs
+            req = requests.get(url)  # Getting request for the URLs
             visited.append(url)
             soup = bs4.BeautifulSoup(req.text, "html.parser")
             for script in soup(["script", "style"]):
                 script.extract()
             text = soup.get_text()  # plain text extracted
-            hash_x = hash(text)  # hash value of the text crawled
-            row_dict["H1"] = hash_x
             row_dict["Flag"] = 1
             j = j + 1
-            row_dict["SNO"] = j
             row_dict["PID"] = j
+            row_dict["SNO"] = j
+            if not text:
+                pass
+            else:
+                hash_x = hash(text)  # hash value of the text crawled
+                row_dict["H1"] = hash_x
+                fn = open(FilesConfig.text_storing + str(j) + ".txt", "w")
+                fn.write(url + "\n")
+                fn.write(text)
+                f1 = open(FilesConfig.hash_value + str(j) + ".txt", "w")
+                f1.write("%d" % hash_x)
             IP = IP_add(url)
             row_dict["IP_Address"] = IP
             csv_writer.writerow(row_dict)
-            writing_text(text, j)
-            writing_hash(hash_x, j)
-            score_IS = bert(text, url)
-            for score in score_IS:
-                print(score)
-                row_dict["Score"] = score
+            print(row_dict)
             n = 0
             for link in soup.find_all("a"):
                 sub_link = link.get(
@@ -133,24 +115,30 @@ def crawling(url):  # crawling plain text, and sub urls
                                 row_dict["SNO"] = j
                                 row_dict["Flag"] = 0
                                 row_dict["H1"] = ""
+                                row_dict["Score"] = ""
                                 n = n + 1
                                 IP = IP_add(sub_link)
                                 row_dict["IP_Address"] = IP
                                 writing_suburls(n, sub_link, IP)
-                                print(row_dict)
                                 csv_writer.writerow(
                                     row_dict
                                 )  # Writing sub-urls data to CSV
+            return text, url
         except Exception as e:
             # print(e)
             pass
     gc.collect()
-    time.sleep(5)
-    crawled_list = sorting_score()  # getting the urls from DB
-    for url in crawled_list:
-        if url not in queue:
-            queue.append(url)
-        thread_initializer(queue)  # initialising threads for the urls got from the DB
+    sleep(10)
+    crawled_list = sorting_ip()  # getting the urls from DB
+    try:
+        for url in crawled_list:
+            if url not in queue:
+                queue.append(url)
+            thread_initializer(
+                queue
+            )  # initialising threads for the urls got from the DB
+    except:
+        pass
 
 
 # def get_url(url):
@@ -183,10 +171,8 @@ def thread_initializer(queue):
     #     upd(thr[0])
     #     thr[1].join()
 
-
-if __name__ == "__main__":
-
-    result = seed_url()
+def main():
+    result = seed_url_fetch()
     if (
         result is not None
     ):  # if there are URL's in DB, add those to the queue and start thread.
