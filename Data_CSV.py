@@ -6,7 +6,7 @@ import configparser
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 import time
-from new_db import update
+from new_db import update_hash
 
 
 def data_to_csv():
@@ -28,30 +28,38 @@ def data_to_csv():
                 url = row[2]
                 url = str(url)
                 hash_x = row[5]
-                update(hash_x, url)
-                result = cur.execute("SELECT * FROM " + DatabaseConfig.Table_Name + " WHERE URLs=%s", (url,))
+                update_hash(hash_x, url)
+                result = cur.execute(
+                    "SELECT * FROM " + DatabaseConfig.Table_Name + " WHERE URLs=%s",
+                    (url,),
+                )
                 if result.fetchone() is None:
                     print(row)
                     sql = (
                         "INSERT INTO "
                         + DatabaseConfig.Table_Name
-                        + "(SNO, PID, URLs, IPAdd, Flag, H1, Score) VALUES (%s, %s, %s, %s, %s, %s, %s)")
+                        + "(SNO, PID, URLs, IPAdd, Flag, H1) VALUES (%s, %s, %s, %s, %s, %s)"
+                    )
                     cur.execute(sql, row)
-                    cur.execute("update Information_Security1 set H1 = NULL where H1 = '';")
+                    cur.execute(
+                        "update Information_Security1 set H1 = NULL where H1 = '';"
+                    )
+                    cur.execute(
+                        "update Information_Security1 set Score = NULL where Score = '';"
+                    )
                     session.commit()
                     # close the connection to the database.
-                else :
+                else:
                     pass
             cur.close()
             print("Done")
     except:
         pass
 
-
-
-while True: # Running the code after every 10 sec so that it doesn't stop.
-    data_to_csv()
-    f = open("Urls.csv", "w")
-    f.truncate()
-    f.close()
-    time.sleep(10)
+def main_csv():
+    while True:  # Running the code after every 10 sec so that it doesn't stop.
+        data_to_csv()
+        f = open("Urls.csv", "w")
+        f.truncate()
+        f.close()
+        time.sleep(10)
