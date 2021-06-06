@@ -22,43 +22,24 @@ cur = engine.connect()
 queue = []
 
 
-# def sorting_ip():  # Sorting IP in form of ascending order
-#     sql = (
-#         "select distinct substring_index(IPADD,'.',1) as a,"
-#         "substring_index(substring_index(IPADD,'.',2),'.',-1) as b,"
-#         "substring_index(substring_index(substring_index\
-#           (IPADD,'.',3),'.',-1),'.',-1) as c,"
-#         "substring_index(IPADD,'.',-1) as d, IPADD  from "
-#         + DatabaseConfig.Table_Name
-#         + " where Flag = 0 order by a+0,b+0,c+0,d+0;"
-#     )
-#     try:
-#         sql_results = cur.execute(sql)
-#         session.commit()
-#         sql_results = sql_results.fetchall()
-#         for element in sql_results:
-#             ip = element[4] # getting only the IP address
-#             result = getUrlsIPBased(ip)
-#             for url in result:
-#                 P_url = url[0]
-#                 queue.append(P_url)
-#         return queue
-
-#     except Exception as e:
-#         pass
-        # print(e)
-        # print("############")
-    # thread_initializer(queue)
-
-def sorting_score():
-    sql = ("select Score from " + DatabaseConfig.Table_Name + "order by Score DSEC;")
+def sorting_ip():  # Sorting IP in form of ascending order
+    sql = (
+        "select distinct substring_index(IPADD,'.',1) as a,"
+        "substring_index(substring_index(IPADD,'.',2),'.',-1) as b,"
+        "substring_index(substring_index(substring_index"
+        "(IPADD,'.',3),'.',-1),'.',-1) as c,"
+        "substring_index(IPADD,'.',-1) as d, IPADD  from "
+        + DatabaseConfig.Table_Name
+        + " where Flag = 0 order by a+0,b+0,c+0,d+0;"
+    )
     try:
         sql_results = cur.execute(sql)
         session.commit()
         sql_results = sql_results.fetchall()
         for element in sql_results:
-            score = element[0]
-            result = getUrlsIPBased(score)
+            ip = element[4]  # getting only the IP address
+
+            result = getUrlsIPBased(ip)
             for url in result:
                 P_url = url[0]
                 queue.append(P_url)
@@ -66,23 +47,59 @@ def sorting_score():
 
     except Exception as e:
         pass
+        # print(e)
+        # print("############")
+    # thread_initializer(queue)
 
 
-def update(hash_x, url): #updating the hash value and its flag after it getting crawled.
+# def sorting_score():
+#     sql = ("select Score from " + DatabaseConfig.Table_Name + " order by Score DESC;")
+#     try:
+#         sql_results = cur.execute(sql)
+#         session.commit()
+#         sql_results = sql_results.fetchall()
+#         for element in sql_results:
+#             score = element[0]
+#             result = getUrlsIPBased(score)
+#             print(result)
+#             for url in result:
+#                 P_url = url[0]
+#                 queue.append(P_url)
+#                 print(queue)
+#         return queue
+
+#     except Exception as e:
+#         pass
+
+
+def update_hash(
+    hash_x, url, score
+):  # updating the hash value and its flag after it getting crawled.
+    hash_x = hash_x
+    url = url
+    score = score
     sql = (
         "update "
         + DatabaseConfig.Table_Name
-        + " set H1 = %s, Flag = 1 where URLs = %s;"
+        + " set H1 = %s, Score = %s, Flag = 1 where URLs = %s;"
     )
-    cur.execute(sql, (hash_x, url))
+    cur.execute(sql, (hash_x, score, url))
+    session.commit()
+
+
+def update_score(score, sno):  # updating score of IS getting from bert
+    score = score
+    sno = sno
+    sql = "update " + DatabaseConfig.Table_Name + " set Score = %s where SNO = %s;"
+    cur.execute(sql, (score, sno))
     session.commit()
 
 
 def getUrlsIPBased(ip):  # fetching all the IP address already in DB
     sql = (
-        "select distinct URLs, IPADD from "
+        "select distinct URLs from "
         + DatabaseConfig.Table_Name
-        + " where Score='"
+        + " where IPADD = '"
         + ip
         + "' and Flag<>1;"
     )
@@ -97,7 +114,7 @@ def getUrlsIPBased(ip):  # fetching all the IP address already in DB
         # print("***********")
 
 
-def seed_url():
+def seed_url_fetch():
     # Checking if there is already some URL's in DB.
     sql = (
         "select distinct substring_index(IPADD,'.',1) as a,\
