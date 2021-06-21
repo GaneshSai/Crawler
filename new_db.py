@@ -73,25 +73,23 @@ def sorting_ip():  # Sorting IP in form of ascending order
 
 
 def update_hash(
-    hash_x, url, score
+    hash_x, url
 ):  # updating the hash value and its flag after it getting crawled.
     hash_x = hash_x
     url = url
-    score = score
     sql = (
         "update "
         + DatabaseConfig.Table_Name
-        + " set H1 = %s, Score = %s, Flag = 1 where URLs = %s;"
+        + " set H1 = %s, Flag = 1 where URLs = %s;"
     )
-    cur.execute(sql, (hash_x, score, url))
+    cur.execute(sql, (hash_x, url))
     session.commit()
 
 
-def update_score(score, sno):  # updating score of IS getting from bert
-    score = score
+def update_score(scoreIS, sno):  # updating score of IS getting from bert
+    score = scoreIS
     sno = sno
-    sql = "update " + DatabaseConfig.Table_Name + " set Score = %s where SNO = %s;"
-    cur.execute(sql, (score, sno))
+    cur.execute("update " + DatabaseConfig.Table_Name + " set Score = %s where SNO = %s;", (score, sno))
     session.commit()
 
 

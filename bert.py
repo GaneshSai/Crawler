@@ -11,6 +11,7 @@ import re
 from sklearn.metrics.pairwise import cosine_similarity
 import csv
 import os.path
+import os
 import configparser
 import json
 from config import FilesConfig
@@ -28,7 +29,7 @@ def cosine_similarity_score(doc_id, similarity_matrix, matrix):
     for ix in similar_ix:
         if ix == doc_id:
             continue
-        return {similarity_matrix[doc_id][ix]}
+        return similarity_matrix[doc_id][ix]
 
 
 def bert(text, sno):
@@ -99,5 +100,8 @@ def main_bert():
                     pass
                 else:
                     score = bert(text, sno)
+                    print(sno + "Done")
         except Exception as e:
             print(e)
+
+main_bert()

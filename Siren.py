@@ -9,10 +9,9 @@ main_csv()
 main_bert()
 
 if __name__ == "__main__":
-    p1 = Process(target=main_csv())
+    p1 = Process(target=main())
     p1.start()
-    sleep(5)
-    p2 = Process(target=main())
+    p2 = Process(target=main_csv())
     p2.start()
     sleep(5)
     p3 = Process(target=main_bert())

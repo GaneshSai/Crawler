@@ -53,12 +53,6 @@ def visited_json(visited):
         json.dump(visited, file)
 
 
-def writing_suburls(n, sub_link, IP):  # Writing sub URLs into text file
-    f = open(FilesConfig.sub_urls, "a")
-    f.write(str(n) + " ) " + sub_link + "-" + IP + "\n")
-    f.close()
-
-
 def crawling(url):  # crawling plain text, and sub urls
     print(url)
     if len(queue) > 0:
@@ -84,7 +78,7 @@ def crawling(url):  # crawling plain text, and sub urls
             else:
                 hash_x = hash(text)  # hash value of the text crawled
                 row_dict["H1"] = hash_x
-                fn = open(FilesConfig.text_storing + str(j) + ".txt", "w")
+                fn = open(FilesConfig.text_storing + str(j) + ".txt", "w", os.O_NONBLOCK)
                 fn.write(url + "\n")
                 fn.write(text)
                 f1 = open(FilesConfig.hash_value + str(j) + ".txt", "w")
@@ -92,7 +86,6 @@ def crawling(url):  # crawling plain text, and sub urls
             IP = IP_add(url)
             row_dict["IP_Address"] = IP
             csv_writer.writerow(row_dict)
-            print(row_dict)
             n = 0
             for link in soup.find_all("a"):
                 sub_link = link.get(
@@ -115,15 +108,10 @@ def crawling(url):  # crawling plain text, and sub urls
                                 row_dict["SNO"] = j
                                 row_dict["Flag"] = 0
                                 row_dict["H1"] = ""
-                                row_dict["Score"] = ""
                                 n = n + 1
                                 IP = IP_add(sub_link)
                                 row_dict["IP_Address"] = IP
-                                writing_suburls(n, sub_link, IP)
-                                csv_writer.writerow(
-                                    row_dict
-                                )  # Writing sub-urls data to CSV
-            return text, url
+                                csv_writer.writerow(row_dict)  # Writing sub-urls data to CSV
         except Exception as e:
             # print(e)
             pass
@@ -177,7 +165,6 @@ def main():
         result is not None
     ):  # if there are URL's in DB, add those to the queue and start thread.
         seed_url = result[6]
-        print(seed_url)
         queue.append(seed_url)
         thread_initializer(queue)
     else:
@@ -187,5 +174,4 @@ def main():
             for url in content:
                 seed_url = url
                 queue.append(seed_url)  # Adding seed-url into queue
-                print(queue)
                 thread_initializer(queue)

@@ -27,14 +27,12 @@ def data_to_csv():
             for row in csv_data:
                 url = row[2]
                 url = str(url)
+                print(url)
                 hash_x = row[5]
                 update_hash(hash_x, url)
-                result = cur.execute(
-                    "SELECT * FROM " + DatabaseConfig.Table_Name + " WHERE URLs=%s",
-                    (url,),
-                )
+                sql = ("SELECT * FROM " + DatabaseConfig.Table_Name + " WHERE URLs=%s")
+                result = cur.execute(sql, url)
                 if result.fetchone() is None:
-                    print(row)
                     sql = (
                         "INSERT INTO "
                         + DatabaseConfig.Table_Name
@@ -42,10 +40,10 @@ def data_to_csv():
                     )
                     cur.execute(sql, row)
                     cur.execute(
-                        "update Information_Security1 set H1 = NULL where H1 = '';"
+                        "update Siren set H1 = NULL where H1 = '';"
                     )
                     cur.execute(
-                        "update Information_Security1 set Score = NULL where Score = '';"
+                        "update Siren set Score = NULL where Score = '';"
                     )
                     session.commit()
                     # close the connection to the database.
