@@ -1,56 +1,13 @@
 import csv
-import mysql.connector
-from config import DatabaseConfig
 from config import FilesConfig
 import configparser
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
 import time
-from new_db import update_hash
-
+import sys
+from mongo_db import *
 
 def data_to_csv():
-    engine = create_engine(
-        "mysql+pymysql://{user}:{pw}@localhost/{db}?charset=utf8mb4".format(
-            user=DatabaseConfig.user,
-            pw=DatabaseConfig.passwd,
-            db=DatabaseConfig.database,
-        )
-    )
-
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    cur = engine.connect()
     try:
-        with open("Urls.csv") as csv_file:
-            csv_data = csv.reader(csv_file)
-            for row in csv_data:
-                url = row[2]
-                url = str(url)
-                print(url)
-                hash_x = row[5]
-                update_hash(hash_x, url)
-                sql = ("SELECT * FROM " + DatabaseConfig.Table_Name + " WHERE URLs=%s")
-                result = cur.execute(sql, url)
-                if result.fetchone() is None:
-                    sql = (
-                        "INSERT INTO "
-                        + DatabaseConfig.Table_Name
-                        + "(SNO, PID, URLs, IPAdd, Flag, H1) VALUES (%s, %s, %s, %s, %s, %s)"
-                    )
-                    cur.execute(sql, row)
-                    cur.execute(
-                        "update Siren set H1 = NULL where H1 = '';"
-                    )
-                    cur.execute(
-                        "update Siren set Score = NULL where Score = '';"
-                    )
-                    session.commit()
-                    # close the connection to the database.
-                else:
-                    pass
-            cur.close()
-            print("Done")
+        insertion()
     except:
         pass
 

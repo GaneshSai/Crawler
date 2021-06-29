@@ -11,9 +11,7 @@ import logging
 import requests
 import time
 import gc
-import mysql.connector
 import configparser
-from config import DatabaseConfig
 from config import FilesConfig
 import os.path
 import csv
@@ -24,9 +22,7 @@ import re
 import json
 import socket
 from tldextract import tldextract
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from new_db import *
+from mongo_db import *
 
 queue = []
 try:
@@ -39,13 +35,10 @@ except:
 sub_urls = {}
 sno = sno()
 if sno is not None:
-    j = int(sno[0])
+    j = sno
 else:
     j = 0
 csv_filename = FilesConfig.csv_file_name + "Urls.csv"
-with open(csv_filename, "a") as Url_csvFile:
-    column_names = CSVColumnConfig.url_column_names
-    csv_writer = csv.DictWriter(Url_csvFile, fieldnames=column_names)
 
 
 def visited_json(visited):
@@ -59,7 +52,10 @@ def crawling(url):  # crawling plain text, and sub urls
         queue.pop(0)
     global i, j
     with open(csv_filename, "a") as Url_csvFile:
+        column_names = CSVColumnConfig.url_column_names
         csv_writer = csv.DictWriter(Url_csvFile, fieldnames=column_names)
+        if Url_csvFile.tell() == 0:
+            csv_writer.writeheader()
         row_dict = {}
         row_dict["URLs"] = url
         try:
@@ -78,7 +74,9 @@ def crawling(url):  # crawling plain text, and sub urls
             else:
                 hash_x = hash(text)  # hash value of the text crawled
                 row_dict["H1"] = hash_x
-                fn = open(FilesConfig.text_storing + str(j) + ".txt", "w", os.O_NONBLOCK)
+                fn = open(
+                    FilesConfig.text_storing + str(j) + ".txt", "w", os.O_NONBLOCK
+                )
                 fn.write(url + "\n")
                 fn.write(text)
                 f1 = open(FilesConfig.hash_value + str(j) + ".txt", "w")
@@ -86,6 +84,7 @@ def crawling(url):  # crawling plain text, and sub urls
             IP = IP_add(url)
             row_dict["IP_Address"] = IP
             csv_writer.writerow(row_dict)
+            print(row_dict)
             n = 0
             for link in soup.find_all("a"):
                 sub_link = link.get(
@@ -111,7 +110,9 @@ def crawling(url):  # crawling plain text, and sub urls
                                 n = n + 1
                                 IP = IP_add(sub_link)
                                 row_dict["IP_Address"] = IP
-                                csv_writer.writerow(row_dict)  # Writing sub-urls data to CSV
+                                csv_writer.writerow(
+                                    row_dict
+                                )  # Writing sub-urls data to CSV
         except Exception as e:
             # print(e)
             pass
@@ -155,16 +156,15 @@ def thread_initializer(queue):
             thr = Thread(target=crawling, args=(u1,))
             thr.start()
             thrs.append((u1, thr))
-    # for thr in thrs:
-    #     upd(thr[0])
-    #     thr[1].join()
+
 
 def main():
     result = seed_url_fetch()
+    print(result)
     if (
         result is not None
     ):  # if there are URL's in DB, add those to the queue and start thread.
-        seed_url = result[6]
+        seed_url = result
         queue.append(seed_url)
         thread_initializer(queue)
     else:

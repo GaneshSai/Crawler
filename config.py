@@ -14,8 +14,6 @@ class DatabaseConfig:
     host = config.get("Database", "host")
     user = config.get("Database", "user")
     passwd = config.get("Database", "passwd")
-    database = config.get("Database", "database")
-    Table_Name = config.get("Database", "table_name")
 
 
 class FilesConfig:

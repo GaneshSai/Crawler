@@ -17,7 +17,7 @@ import json
 from config import FilesConfig
 import sys
 from config import CSVColumnConfig
-from new_db import update_score
+import mongo_db
 
 # w2v_model_300 = KeyedVectors.load_word2vec_format("model300.bin", binary=True)
 sbert_model = SentenceTransformer("bert-base-nli-mean-tokens")  # Model being loaded...
